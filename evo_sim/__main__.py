@@ -74,8 +74,17 @@ def main():
         (WINDOW_WIDTH - refresh_button.size[0] - 60, WINDOW_HEIGHT - 50),
         callback=quit_game,
     )
+    start_button = ui_parts.Button(
+        WINDOW,
+        'Start Sim',
+        (
+            WINDOW_WIDTH - refresh_button.size[0] - quit_button.size[0] - 120,
+            WINDOW_HEIGHT - 50
+        ),
+    )
     refresh_button.show()
     quit_button.show()
+    start_button.show()
 
     # Rendered from top down, therefore visually max is our min
     min_index = np.argmin(hill_y)
@@ -94,6 +103,7 @@ def main():
                 quit_game()
             refresh_button.click(event)
             quit_button.click(event)
+            start_button.click(event)
 
         # Processing
         # This section will be built out later
