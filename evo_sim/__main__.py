@@ -3,7 +3,7 @@ import pygame
 from pygame import locals
 import sys
 
-from ir_sim import exceptions, functions, ui_parts
+from evo_sim import exceptions, functions, ui_parts
 
 pygame.init()
 
