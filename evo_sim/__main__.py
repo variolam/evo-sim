@@ -1,6 +1,6 @@
 import numpy as np
 import pygame
-from pygame import locals
+from pygame import locals as py_locals
 import sys
 
 from evo_sim import exceptions, functions, ui_parts
@@ -99,7 +99,7 @@ def main():
     while looping:
         # Get inputs
         for event in pygame.event.get():
-            if event.type == locals.QUIT:
+            if event.type == py_locals.QUIT:
                 quit_game()
             refresh_button.click(event)
             quit_button.click(event)
