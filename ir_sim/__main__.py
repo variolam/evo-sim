@@ -1,8 +1,10 @@
-from ir_sim import functions
 import numpy as np
 import pygame
 from pygame import locals
 import sys
+
+from ir_sim import functions
+
 pygame.init()
 
 # Colours
