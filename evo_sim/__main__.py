@@ -31,6 +31,15 @@ def refresh():
     raise exceptions.ResetException()
 
 
+def draw_max(x_pos, y_pos, color=(255, 0, 0), radius=20, offsets=(0, 0)):
+    pygame.draw.circle(
+        WINDOW,
+        color=color,
+        center=(x_pos + offsets[0], y_pos + offsets[1]),
+        radius=radius,
+    )
+
+
 # The main function that controls the game
 def main():
     looping = True
@@ -61,6 +70,15 @@ def main():
     )
     refresh_button.show()
     quit_button.show()
+
+    # Rendered from top down, therefore visually max is our min
+    min_index = np.argmin(hill_y)
+    draw_max(
+        x_pos=hill_x[min_index],
+        y_pos=hill_y[min_index],
+        radius=8,
+        offsets=(0, -50)
+    )
 
     # The main game loop
     while looping:
