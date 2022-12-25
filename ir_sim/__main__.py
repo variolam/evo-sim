@@ -3,7 +3,7 @@ import pygame
 from pygame import locals
 import sys
 
-from ir_sim import functions
+from ir_sim import functions, ui_parts
 
 pygame.init()
 
@@ -19,6 +19,11 @@ WINDOW_HEIGHT = 600
 
 WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption('IR-Sim')
+
+
+def quit_game():
+    pygame.quit()
+    sys.exit()
 
 
 # The main function that controls the game
@@ -37,13 +42,28 @@ def main():
     WINDOW.fill(BACKGROUND_C)
     pygame.draw.lines(WINDOW, LINE_C, False, points, 3)
 
+    refresh_button = ui_parts.Button(
+        WINDOW,
+        'Refresh',
+        (WINDOW_WIDTH - 80, WINDOW_HEIGHT - 50)
+    )
+    quit_button = ui_parts.Button(
+        WINDOW,
+        'Quit',
+        (WINDOW_WIDTH - refresh_button.size[0] - 60, WINDOW_HEIGHT - 50),
+        callback=quit_game,
+    )
+    refresh_button.show()
+    quit_button.show()
+
     # The main game loop
     while looping:
         # Get inputs
         for event in pygame.event.get():
             if event.type == locals.QUIT:
-                pygame.quit()
-                sys.exit()
+                quit_game()
+            refresh_button.click(event)
+            quit_button.click(event)
 
         # Processing
         # This section will be built out later
