@@ -3,11 +3,6 @@ import numpy as np
 import random
 
 
-# For reproducability
-np.random.seed(42)
-random.seed(42)
-
-
 def cosine_part(*, amp: float, phi: float, f: float, n_points: int):
     time = np.arange(n_points) / float(n_points)
     return amp * np.cos(2 * np.pi * f * time + 2 * np.pi * phi)
