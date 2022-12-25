@@ -3,7 +3,7 @@ import pygame
 from pygame import locals
 import sys
 
-from ir_sim import functions, ui_parts
+from ir_sim import exceptions, functions, ui_parts
 
 pygame.init()
 
@@ -26,6 +26,11 @@ def quit_game():
     sys.exit()
 
 
+def refresh():
+    # Super hacky, but works
+    raise exceptions.ResetException()
+
+
 # The main function that controls the game
 def main():
     looping = True
@@ -45,7 +50,8 @@ def main():
     refresh_button = ui_parts.Button(
         WINDOW,
         'Refresh',
-        (WINDOW_WIDTH - 80, WINDOW_HEIGHT - 50)
+        (WINDOW_WIDTH - 80, WINDOW_HEIGHT - 50),
+        callback=refresh,
     )
     quit_button = ui_parts.Button(
         WINDOW,
@@ -74,4 +80,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    while True:
+        try:
+            main()
+        except exceptions.ResetException:
+            print("Resetting environment...")
