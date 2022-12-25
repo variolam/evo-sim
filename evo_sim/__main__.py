@@ -32,11 +32,17 @@ def refresh():
 
 
 def draw_max(x_pos, y_pos, color=(255, 0, 0), radius=20, offsets=(0, 0)):
-    pygame.draw.circle(
+    x_pos = x_pos + offsets[0]
+    y_pos = y_pos + offsets[1]
+
+    pygame.draw.polygon(
         WINDOW,
         color=color,
-        center=(x_pos + offsets[0], y_pos + offsets[1]),
-        radius=radius,
+        points=[
+            (x_pos, y_pos),
+            (x_pos - 8, y_pos - 8),
+            (x_pos + 8, y_pos - 8)
+        ]
     )
 
 
