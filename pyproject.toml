@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "ir_sim"
+name = "evo-sim"
 version = "0.1.0"
 description = ""
 authors = ["Michael Variola <michael.variola@gmail.com>"]
