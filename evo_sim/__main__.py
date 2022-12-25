@@ -3,7 +3,7 @@ import pygame
 from pygame import locals as py_locals
 import sys
 
-from evo_sim import exceptions, functions, ui_parts
+from evo_sim import algs, exceptions, functions, ui_parts
 
 pygame.init()
 
@@ -44,6 +44,16 @@ def draw_max(x_pos, y_pos, color=(255, 0, 0), radius=20, offsets=(0, 0)):
             (x_pos + 8, y_pos - 8)
         ]
     )
+
+
+def draw_population(population: list[algs.Individual]):
+    for idv in population:
+        pygame.draw.circle(
+            WINDOW,
+            color=idv.colour,
+            center=(idv.x_pos, idv.y_pos),
+            radius=idv.radius,
+        )
 
 
 # The main function that controls the game
@@ -95,6 +105,12 @@ def main():
         offsets=(0, -50)
     )
 
+    gen_algo = algs.GeneticAlgorithm(
+        20,
+        fitness_function=lambda x: hill_y[x],
+        max_x=WINDOW_WIDTH,
+    )
+
     # The main game loop
     while looping:
         # Get inputs
@@ -105,8 +121,8 @@ def main():
             quit_button.click(event)
             start_button.click(event)
 
-        # Processing
-        # This section will be built out later
+        population = gen_algo()
+        draw_population(population)
 
         # Render elements of the game
         pygame.display.update()
