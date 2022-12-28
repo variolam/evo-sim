@@ -17,12 +17,15 @@ class BinaryPhenotype:
         except ValueError as e:
             print(f"Error while creating phenotype: {e}")
             raise e
-        
+
         self.genotype = self.genotype.replace('0b', '')
         self.length = len(self.genotype)
 
+    def __int__(self) -> int:
+        return int(self.genotype, 2)
+
     def __str__(self) -> str:
-        return str(int(self.genotype, 2))
+        return str(int(self))
 
     def __repr__(self) -> str:
         return f"BinaryPhenotype(genotype={self.genotype})"
