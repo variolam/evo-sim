@@ -1,4 +1,4 @@
-from ir_sim import __version__
+from evo_sim import __version__
 
 
 def test_version():
