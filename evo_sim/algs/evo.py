@@ -134,7 +134,7 @@ class GeneticAlgorithm:
         ]
         best_solution = self.population[np.argmin(fitness_val)]
 
-        if best_solution > self.best_solution:
+        if best_solution.fitness_val < self.best_solution.fitness_val:
             self.best_solution = best_solution
 
         intermediate_pop = []

@@ -147,7 +147,7 @@ def main():
             first_loop = False
 
         if STARTED == 'evo':
-            if gen_algo._generation < 1000:
+            if gen_algo._generation < 500:
                 population = gen_algo()
             draw_population(population)
 
@@ -157,6 +157,7 @@ def main():
                 x_pos=best_x,
                 y_pos=best_y,
                 color=(0, 0, 255),
+                offsets=(0, -100)
             )
 
         # Render elements of the game
