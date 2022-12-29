@@ -50,7 +50,7 @@ def draw_population(population: list[algs.Individual]):
     for idv in population:
         pygame.draw.circle(
             WINDOW,
-            color=idv.colour,
+            color=idv.colour,  # type: ignore
             center=(idv.x_pos, idv.y_pos),
             radius=idv.radius,
         )

@@ -8,6 +8,7 @@ from evo_sim.algs.repr import Individual
 
 @dataclasses.dataclass
 class BinaryPhenotype:
+    fitness_function: typing.ClassVar[typing.Callable[[int], float]]
     genotype: str
     length: int = dataclasses.field(init=False)
 
@@ -36,8 +37,11 @@ class BinaryPhenotype:
 
         return int(self) < int(other)
 
-    def to_individual(self, y_pos: float) -> Individual:
-        return Individual(x_pos=float(str(self)), y_pos=y_pos)
+    def to_individual(self) -> Individual:
+        return Individual(
+            x_pos=float(str(self)),
+            y_pos=type(self).fitness_function(int(self))
+        )
 
     def flip_bit(self, index: int | None = None) -> None:
         if index is None:
@@ -93,6 +97,7 @@ class GeneticAlgorithm:
         self._generation = 0
         self.genotype_length = max_x.bit_length()
 
+        BinaryPhenotype.fitness_function = fitness_function
         self.population: list[BinaryPhenotype] = []
         for _ in range(population_size):
             x_pos = np.random.randint(0, high=max_x)
@@ -100,7 +105,4 @@ class GeneticAlgorithm:
             self.population.append(idv)
 
     def __call__(self, *args, **kwds) -> list[Individual]:
-        return [
-            gen.to_individual(y_pos=self.fitness_function(int(gen)))
-            for gen in self.population
-        ]
+        return [gen.to_individual() for gen in self.population]
