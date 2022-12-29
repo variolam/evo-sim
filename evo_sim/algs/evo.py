@@ -30,6 +30,12 @@ class BinaryPhenotype:
     def __repr__(self) -> str:
         return f"BinaryPhenotype(genotype={self.genotype})"
 
+    def __lt__(self, other) -> bool:
+        if not isinstance(other, type(self)):
+            raise ValueError(f"__lt__ not supported for type {type(other)}")
+
+        return int(self) < int(other)
+
     def to_individual(self, y_pos: float) -> Individual:
         return Individual(x_pos=float(str(self)), y_pos=y_pos)
 

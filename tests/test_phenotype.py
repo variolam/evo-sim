@@ -1,4 +1,5 @@
 import pytest
+import random
 
 from evo_sim.algs.evo import BinaryPhenotype
 
@@ -53,3 +54,25 @@ def test_crossover_odd_length():
 
     assert '0000001' == off_1.genotype
     assert '1111110' == off_2.genotype
+
+
+def test_crossover_invalid(start_value):
+    phen_1 = BinaryPhenotype(start_value)
+
+    with pytest.raises(ValueError):
+        phen_1 + 'invalid type'
+
+
+def test_sorting():
+    phen_1 = BinaryPhenotype('000001')
+    phen_2 = BinaryPhenotype('001001')
+    phen_3 = BinaryPhenotype('100000')
+
+    phen_list = [phen_1, phen_2, phen_3]
+    random.shuffle(phen_list)
+
+    phen_list.sort()
+
+    assert phen_1 is phen_list[0]
+    assert phen_2 is phen_list[1]
+    assert phen_3 is phen_list[2]
