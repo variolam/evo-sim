@@ -82,7 +82,6 @@ def main():
     print(f"Max Point: {max(hill_y)}")
     print(f"Min Point: {min(hill_y)}")
 
-
     refresh_button = ui_parts.Button(
         WINDOW,
         'Refresh',
@@ -105,10 +104,8 @@ def main():
         callback=start_button_callback,
     )
 
-
     # Rendered from top down, therefore visually max is our min
     min_index = np.argmin(hill_y)
-
 
     gen_algo = algs.GeneticAlgorithm(
         20,
