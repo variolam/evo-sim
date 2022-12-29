@@ -57,30 +57,14 @@ def start_button_callback():
     start('evo')
 
 
-LAST_POP = []
 def draw_population(population: list[algs.Individual]):
-    global LAST_POP
-    init = bool(LAST_POP)
-
-    if not init:
-        for idv in population:
-            rec = pygame.draw.circle(
-                WINDOW,
-                color=idv.colour,  # type: ignore
-                center=(idv.x_pos, idv.y_pos),
-                radius=idv.radius,
-            )
-            LAST_POP.append(rec)
-    else:
-        for rec, idv in zip(LAST_POP, population):
-            x_diff = idv.x_pos - rec.x
-            y_diff = idv.y_pos - rec.y
-            rec.move_ip(x_diff, y_diff)
-            pygame.draw.rect(
-                WINDOW,
-                color=idv.colour,
-                rect=rec,
-            )
+    for idv in population:
+        pygame.draw.circle(
+            WINDOW,
+            color=idv.colour,  # type: ignore
+            center=(idv.x_pos, idv.y_pos),
+            radius=idv.radius,
+        )
 
 
 # The main function that controls the game
@@ -97,8 +81,7 @@ def main():
     points = list(zip(hill_x, hill_y))
     print(f"Max Point: {max(hill_y)}")
     print(f"Min Point: {min(hill_y)}")
-    WINDOW.fill(BACKGROUND_C)
-    pygame.draw.lines(WINDOW, LINE_C, False, points, 3)
+
 
     refresh_button = ui_parts.Button(
         WINDOW,
@@ -121,18 +104,11 @@ def main():
         ),
         callback=start_button_callback,
     )
-    refresh_button.show()
-    quit_button.show()
-    start_button.show()
+
 
     # Rendered from top down, therefore visually max is our min
     min_index = np.argmin(hill_y)
-    draw_max(
-        x_pos=hill_x[min_index],
-        y_pos=hill_y[min_index],
-        radius=8,
-        offsets=(0, -50)
-    )
+
 
     gen_algo = algs.GeneticAlgorithm(
         20,
@@ -142,6 +118,18 @@ def main():
 
     # The main game loop
     while looping:
+        WINDOW.fill(BACKGROUND_C)
+        pygame.draw.lines(WINDOW, LINE_C, False, points, 3)
+        refresh_button.show()
+        quit_button.show()
+        start_button.show()
+        draw_max(
+            x_pos=hill_x[min_index],
+            y_pos=hill_y[min_index],
+            radius=8,
+            offsets=(0, -50)
+        )
+
         # Get inputs
         for event in pygame.event.get():
             if event.type == py_locals.QUIT:
