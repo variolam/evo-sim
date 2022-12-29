@@ -32,7 +32,7 @@ def refresh():
     raise exceptions.ResetException()
 
 
-def draw_max(x_pos, y_pos, color=(255, 0, 0), radius=20, offsets=(0, 0)):
+def draw_triangle(x_pos, y_pos, color=(255, 0, 0), radius=20, offsets=(0, 0)):
     x_pos = x_pos + offsets[0]
     y_pos = y_pos + offsets[1]
 
@@ -78,6 +78,12 @@ def main():
         pos_y=WINDOW_HEIGHT / 4.0
     )
 
+    def fitness_function(x):
+        try:
+            return hill_y[x]
+        except IndexError:
+            return hill_y[-1]
+
     points = list(zip(hill_x, hill_y))
     print(f"Max Point: {max(hill_y)}")
     print(f"Min Point: {min(hill_y)}")
@@ -109,7 +115,7 @@ def main():
 
     gen_algo = algs.GeneticAlgorithm(
         20,
-        fitness_function=lambda x: hill_y[x],
+        fitness_function=fitness_function,
         max_x=WINDOW_WIDTH,
     )
 
@@ -120,7 +126,7 @@ def main():
         refresh_button.show()
         quit_button.show()
         start_button.show()
-        draw_max(
+        draw_triangle(
             x_pos=hill_x[min_index],
             y_pos=hill_y[min_index],
             radius=8,
@@ -141,8 +147,17 @@ def main():
             first_loop = False
 
         if STARTED == 'evo':
-            population = gen_algo()
+            if gen_algo._generation < 1000:
+                population = gen_algo()
             draw_population(population)
+
+            best_x = int(gen_algo.best_solution)
+            best_y = fitness_function(best_x)
+            draw_triangle(
+                x_pos=best_x,
+                y_pos=best_y,
+                color=(0, 0, 255),
+            )
 
         # Render elements of the game
         pygame.display.update()

@@ -1,4 +1,5 @@
 import dataclasses
+import functools
 import numpy as np
 import random
 import typing
@@ -6,7 +7,8 @@ import typing
 from evo_sim.algs.repr import Individual
 
 
-@dataclasses.dataclass
+@functools.total_ordering
+@dataclasses.dataclass(eq=False)
 class BinaryPhenotype:
     fitness_function: typing.ClassVar[typing.Callable[[int], float]]
     genotype: str
@@ -36,6 +38,11 @@ class BinaryPhenotype:
             raise ValueError(f"__lt__ not supported for type {type(other)}")
 
         return int(self) < int(other)
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, type(self)):
+            raise ValueError(f"__lt__ not supported for type {type(other)}")
+        return int(self) == int(other)
 
     def to_individual(self) -> Individual:
         return Individual(
@@ -83,6 +90,10 @@ class BinaryPhenotype:
 
         return cls("{0:0{length}b}".format(value, length=length))
 
+    @property
+    def fitness_val(self) -> float:
+        return type(self).fitness_function(int(self))
+
 
 class GeneticAlgorithm:
 
@@ -97,6 +108,7 @@ class GeneticAlgorithm:
         self._generation = 0
         self.genotype_length = max_x.bit_length()
         self.max_x = max_x
+        self.best_solution = BinaryPhenotype.from_int(0, self.max_x)
 
         BinaryPhenotype.fitness_function = fitness_function
         self.population: list[BinaryPhenotype] = []
@@ -107,31 +119,39 @@ class GeneticAlgorithm:
 
     def __call__(self, *args, **kwds) -> list[Individual]:
 
-        best = sorted(
-            self.population,
-            reverse=True,
-        )[:self.population_size // 2]
+        # Roulette wheel selection
+        fitness_val = np.array([p.fitness_val for p in self.population])
+        probs = fitness_val / fitness_val.sum()
+        roulette_choice_indices = np.random.choice(
+            self.population_size,
+            size=self.population_size // 2,
+            replace=False,
+            p=probs,
+        )
+        choices = [
+            p for i, p in enumerate(self.population)
+            if i in roulette_choice_indices
+        ]
+        best_solution = self.population[np.argmin(fitness_val)]
+
+        if best_solution > self.best_solution:
+            self.best_solution = best_solution
 
         intermediate_pop = []
-        for i, parent_1 in enumerate(best):
-            if (i + 1) == len(best):
+        for i, parent_1 in enumerate(choices):
+            if (i + 1) == len(choices):
                 break
 
-            parent_2 = best[i + 1]
+            parent_2 = choices[i + 1]
             off_1, off_2 = parent_1 + parent_2
 
-            off_1.flip_bit()
-            off_2.flip_bit()
-
-            if int(off_1) >= self.max_x:
-                off_1.genotype = bin(self.max_x - 1).replace('0b', '')
-
-            if int(off_2) >= self.max_x:
-                off_2.genotype = bin(self.max_x - 1).replace('0b', '')
+            if random.random() <= 0.2:
+                off_1.flip_bit()
+                off_2.flip_bit()
 
             intermediate_pop.append(off_1)
             intermediate_pop.append(off_2)
 
-        self.population = best[:2] + intermediate_pop
+        self.population = choices[:2] + intermediate_pop
         self._generation += 1
         return [gen.to_individual() for gen in self.population]
