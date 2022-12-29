@@ -96,6 +96,7 @@ class GeneticAlgorithm:
         self.fitness_function = fitness_function
         self._generation = 0
         self.genotype_length = max_x.bit_length()
+        self.max_x = max_x
 
         BinaryPhenotype.fitness_function = fitness_function
         self.population: list[BinaryPhenotype] = []
@@ -105,4 +106,32 @@ class GeneticAlgorithm:
             self.population.append(idv)
 
     def __call__(self, *args, **kwds) -> list[Individual]:
+
+        best = sorted(
+            self.population,
+            reverse=True,
+        )[:self.population_size // 2]
+
+        intermediate_pop = []
+        for i, parent_1 in enumerate(best):
+            if (i + 1) == len(best):
+                break
+
+            parent_2 = best[i + 1]
+            off_1, off_2 = parent_1 + parent_2
+
+            off_1.flip_bit()
+            off_2.flip_bit()
+
+            if int(off_1) >= self.max_x:
+                off_1.genotype = bin(self.max_x - 1).replace('0b', '')
+
+            if int(off_2) >= self.max_x:
+                off_2.genotype = bin(self.max_x - 1).replace('0b', '')
+
+            intermediate_pop.append(off_1)
+            intermediate_pop.append(off_2)
+
+        self.population = best[:2] + intermediate_pop
+        self._generation += 1
         return [gen.to_individual() for gen in self.population]
