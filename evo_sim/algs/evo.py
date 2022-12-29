@@ -102,20 +102,27 @@ class GeneticAlgorithm:
         population_size: int,
         fitness_function: typing.Callable[[int], float],
         max_x: int = 100,
+        init_x: int = 0,
     ) -> None:
         self.population_size = population_size
         self.fitness_function = fitness_function
         self._generation = 0
         self.genotype_length = max_x.bit_length()
         self.max_x = max_x
-        self.best_solution = BinaryPhenotype.from_int(0, self.max_x)
+        self.best_solution = BinaryPhenotype.from_int(init_x, self.max_x)
 
         BinaryPhenotype.fitness_function = fitness_function
         self.population: list[BinaryPhenotype] = []
+        self._original_population: list[BinaryPhenotype] = []
         for _ in range(population_size):
             x_pos = np.random.randint(0, high=max_x)
             idv = BinaryPhenotype.from_int(x_pos, length=self.genotype_length)
             self.population.append(idv)
+            self._original_population.append(idv)
+
+    @property
+    def original_population(self) -> list[Individual]:
+        return [gen.to_individual() for gen in self.population]
 
     def __call__(self, *args, **kwds) -> list[Individual]:
 

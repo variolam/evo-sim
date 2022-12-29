@@ -117,6 +117,7 @@ def main():
         20,
         fitness_function=fitness_function,
         max_x=WINDOW_WIDTH,
+        init_x=int(np.argmax(hill_y)),
     )
 
     # The main game loop
@@ -142,7 +143,7 @@ def main():
             start_button.click(event)
 
         if first_loop:
-            population = gen_algo()
+            population = gen_algo.original_population
             draw_population(population)
             first_loop = False
 
@@ -151,14 +152,14 @@ def main():
                 population = gen_algo()
             draw_population(population)
 
-            best_x = int(gen_algo.best_solution)
-            best_y = fitness_function(best_x)
-            draw_triangle(
-                x_pos=best_x,
-                y_pos=best_y,
-                color=(0, 0, 255),
-                offsets=(0, -100)
-            )
+        best_x = int(gen_algo.best_solution)
+        best_y = gen_algo.best_solution.fitness_val
+        draw_triangle(
+            x_pos=best_x,
+            y_pos=best_y,
+            color=(0, 0, 255),
+            offsets=(0, -100)
+        )
 
         # Render elements of the game
         pygame.display.update()
