@@ -42,6 +42,25 @@ class BinaryPhenotype:
         self.genotype = \
             self.genotype[:index] + flipped + self.genotype[index + 1:]
 
+    def __add__(self, other) -> tuple['BinaryPhenotype', 'BinaryPhenotype']:
+        if not isinstance(other, type(self)):
+            raise ValueError(f"__add__ not supported for type {type(other)}")
+
+        assert self.length == other.length, (
+            f"Lenght of genotypes mismatch! Self: {self.length}, "
+            f"other: {other.length}"
+        )
+
+        cut_off = self.length // 2
+
+        new_genotype_1 = self.genotype[:cut_off] + other.genotype[cut_off:]
+        new_genotype_2 = other.genotype[:cut_off] + self.genotype[cut_off:]
+
+        offspring_1 = type(self)(new_genotype_1)
+        offspring_2 = type(self)(new_genotype_2)
+
+        return (offspring_1, offspring_2)
+
 
 class GeneticAlgorithm:
 
