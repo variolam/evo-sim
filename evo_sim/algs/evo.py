@@ -91,13 +91,16 @@ class GeneticAlgorithm:
         self.population_size = population_size
         self.fitness_function = fitness_function
         self._generation = 0
+        self.genotype_length = max_x.bit_length()
 
-        self.population = []
+        self.population: list[BinaryPhenotype] = []
         for _ in range(population_size):
             x_pos = np.random.randint(0, high=max_x)
-            y_pos = fitness_function(x_pos)
-            idv = Individual(x_pos=x_pos, y_pos=y_pos)
+            idv = BinaryPhenotype.from_int(x_pos, length=self.genotype_length)
             self.population.append(idv)
 
     def __call__(self, *args, **kwds) -> list[Individual]:
-        return self.population
+        return [
+            gen.to_individual(y_pos=self.fitness_function(int(gen)))
+            for gen in self.population
+        ]
