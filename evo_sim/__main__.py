@@ -113,6 +113,14 @@ def main():
 
     # The main game loop
     while looping:
+        WINDOW.fill(BACKGROUND_C)
+        pygame.draw.lines(WINDOW, LINE_C, False, points, 3)
+        draw_max(
+            x_pos=hill_x[min_index],
+            y_pos=hill_y[min_index],
+            radius=8,
+            offsets=(0, -50)
+        )
         # Get inputs
         for event in pygame.event.get():
             if event.type == py_locals.QUIT:
