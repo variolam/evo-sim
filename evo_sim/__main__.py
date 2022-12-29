@@ -16,6 +16,7 @@ FPS = 60
 fpsClock = pygame.time.Clock()
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
+STARTED = 'False'
 
 WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption('evo-sim')
@@ -46,18 +47,45 @@ def draw_max(x_pos, y_pos, color=(255, 0, 0), radius=20, offsets=(0, 0)):
     )
 
 
+def start(mode):
+    global STARTED
+    assert mode in ['False', 'evo', 'bee'], "Mode not recoginzed!"
+    STARTED = mode
+
+
+def start_button_callback():
+    start('evo')
+
+
+LAST_POP = []
 def draw_population(population: list[algs.Individual]):
-    for idv in population:
-        pygame.draw.circle(
-            WINDOW,
-            color=idv.colour,  # type: ignore
-            center=(idv.x_pos, idv.y_pos),
-            radius=idv.radius,
-        )
+    global LAST_POP
+    init = bool(LAST_POP)
+
+    if not init:
+        for idv in population:
+            rec = pygame.draw.circle(
+                WINDOW,
+                color=idv.colour,  # type: ignore
+                center=(idv.x_pos, idv.y_pos),
+                radius=idv.radius,
+            )
+            LAST_POP.append(rec)
+    else:
+        for rec, idv in zip(LAST_POP, population):
+            x_diff = idv.x_pos - rec.x
+            y_diff = idv.y_pos - rec.y
+            rec.move_ip(x_diff, y_diff)
+            pygame.draw.rect(
+                WINDOW,
+                color=idv.colour,
+                rect=rec,
+            )
 
 
 # The main function that controls the game
 def main():
+    first_loop = True
     looping = True
     hill_x = np.arange(WINDOW_WIDTH)
     hill_y = functions.hill(
@@ -91,6 +119,7 @@ def main():
             WINDOW_WIDTH - refresh_button.size[0] - quit_button.size[0] - 120,
             WINDOW_HEIGHT - 50
         ),
+        callback=start_button_callback,
     )
     refresh_button.show()
     quit_button.show()
@@ -113,14 +142,6 @@ def main():
 
     # The main game loop
     while looping:
-        WINDOW.fill(BACKGROUND_C)
-        pygame.draw.lines(WINDOW, LINE_C, False, points, 3)
-        draw_max(
-            x_pos=hill_x[min_index],
-            y_pos=hill_y[min_index],
-            radius=8,
-            offsets=(0, -50)
-        )
         # Get inputs
         for event in pygame.event.get():
             if event.type == py_locals.QUIT:
@@ -129,8 +150,14 @@ def main():
             quit_button.click(event)
             start_button.click(event)
 
-        population = gen_algo()
-        draw_population(population)
+        if first_loop:
+            population = gen_algo()
+            draw_population(population)
+            first_loop = False
+
+        if STARTED == 'evo':
+            population = gen_algo()
+            draw_population(population)
 
         # Render elements of the game
         pygame.display.update()
