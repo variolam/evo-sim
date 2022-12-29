@@ -76,3 +76,15 @@ def test_sorting():
     assert phen_1 is phen_list[0]
     assert phen_2 is phen_list[1]
     assert phen_3 is phen_list[2]
+
+
+def test_init_from_int_none_length():
+    phen_1 = BinaryPhenotype.from_int(15)
+
+    assert '1111' == phen_1.genotype
+
+
+def test_init_from_int_var_length():
+    phen_1 = BinaryPhenotype.from_int(15, length=10)
+
+    assert '0000001111' == phen_1.genotype

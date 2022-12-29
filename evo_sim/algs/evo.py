@@ -67,6 +67,18 @@ class BinaryPhenotype:
 
         return (offspring_1, offspring_2)
 
+    @classmethod
+    def from_int(cls, value: int, length: int | None = None):
+        if not isinstance(value, int):
+            raise ValueError(
+                f"'from_int' method not supported for type {type(value)}"
+            )
+
+        if length is None:
+            return cls(bin(value))
+
+        return cls("{0:0{length}b}".format(value, length=length))
+
 
 class GeneticAlgorithm:
 
