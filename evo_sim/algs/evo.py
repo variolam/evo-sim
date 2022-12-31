@@ -31,7 +31,7 @@ class BinaryPhenotype:
         return str(int(self))
 
     def __repr__(self) -> str:
-        return f"BinaryPhenotype(genotype={self.genotype})"
+        return f"BinaryPhenotype(genotype={self.genotype}, fitness_value={self.fitness_val}, phenotype={int(self)})"  # noqa: E501
 
     def __lt__(self, other) -> bool:
         if not isinstance(other, type(self)):
@@ -110,6 +110,9 @@ class GeneticAlgorithm:
         self.genotype_length = max_x.bit_length()
         self.max_x = max_x
         self.best_solution = BinaryPhenotype.from_int(init_x, self.max_x)
+        self.log = {  # type: ignore
+            'solutions_found_in_gen': {}
+        }
 
         BinaryPhenotype.fitness_function = fitness_function
         self.population: list[BinaryPhenotype] = []
@@ -128,6 +131,7 @@ class GeneticAlgorithm:
 
         # Roulette wheel selection
         fitness_val = np.array([p.fitness_val for p in self.population])
+        fitness_val = 1.0 / (1.0 + fitness_val)
         probs = fitness_val / fitness_val.sum()
         roulette_choice_indices = np.random.choice(
             self.population_size,
@@ -135,14 +139,11 @@ class GeneticAlgorithm:
             replace=False,
             p=probs,
         )
+
         choices = [
             p for i, p in enumerate(self.population)
             if i in roulette_choice_indices
         ]
-        best_solution = self.population[np.argmin(fitness_val)]
-
-        if best_solution.fitness_val < self.best_solution.fitness_val:
-            self.best_solution = best_solution
 
         intermediate_pop = []
         for i, parent_1 in enumerate(choices):
@@ -160,5 +161,13 @@ class GeneticAlgorithm:
             intermediate_pop.append(off_2)
 
         self.population = choices[:2] + intermediate_pop
+
+        best_solution = self.population[np.argmin(fitness_val)]
+        if best_solution.fitness_val < self.best_solution.fitness_val:
+            self.log['solutions_found_in_gen'].update(
+                {self._generation: repr(best_solution)}
+            )
+            self.best_solution = best_solution
+
         self._generation += 1
         return [gen.to_individual() for gen in self.population]

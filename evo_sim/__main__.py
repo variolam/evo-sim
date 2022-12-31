@@ -1,3 +1,4 @@
+import json
 import numpy as np
 import pygame
 from pygame import locals as py_locals
@@ -14,9 +15,11 @@ LINE_C = (74, 87, 51)
 # Game Setup
 FPS = 60
 fpsClock = pygame.time.Clock()
-WINDOW_WIDTH = 800
+WINDOW_WIDTH = 1024
 WINDOW_HEIGHT = 600
 STARTED = 'False'
+PRINTED_BEST = False
+STOP_AFTER = 200
 
 WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption('evo-sim')
@@ -69,6 +72,7 @@ def draw_population(population: list[algs.Individual]):
 
 # The main function that controls the game
 def main():
+    global PRINTED_BEST
     first_loop = True
     looping = True
     hill_x = np.arange(WINDOW_WIDTH)
@@ -148,8 +152,14 @@ def main():
             first_loop = False
 
         if STARTED == 'evo':
-            if gen_algo._generation < 500:
+            if gen_algo._generation < STOP_AFTER:
                 population = gen_algo()
+            elif gen_algo._generation >= STOP_AFTER and not PRINTED_BEST:
+                print(f"Best solution found: {repr(gen_algo.best_solution)}")
+                print(f"Global best solution: {np.min(hill_y)}, {np.min(hill_x)}")
+                print("Logs: ")
+                print(json.dumps(gen_algo.log, indent=2))
+                PRINTED_BEST = True
             draw_population(population)
 
         best_x = int(gen_algo.best_solution)
