@@ -147,6 +147,11 @@ class GeneticAlgorithm:
             if i in roulette_choice_indices
         ]
 
+        # Elitism, keep two best
+        best_two = [
+            self.population[i] for i in np.argsort(fitness_val)[-2:]
+        ]
+
         intermediate_pop = []
         for i, parent_1 in enumerate(choices):
             if (i + 1) == len(choices):
@@ -164,7 +169,7 @@ class GeneticAlgorithm:
             intermediate_pop.append(off_1)
             intermediate_pop.append(off_2)
 
-        self.population = choices[:2] + intermediate_pop
+        self.population = best_two + intermediate_pop
 
         best_solution = self.population[np.argmin(fitness_val)]
         if best_solution.fitness_val < self.best_solution.fitness_val:
