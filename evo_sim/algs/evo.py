@@ -103,6 +103,7 @@ class GeneticAlgorithm:
         fitness_function: typing.Callable[[int], float],
         max_x: int = 100,
         init_x: int = 0,
+        mutation_rate: float = 0.2
     ) -> None:
         self.population_size = population_size
         self.fitness_function = fitness_function
@@ -110,6 +111,7 @@ class GeneticAlgorithm:
         self.genotype_length = max_x.bit_length()
         self.max_x = max_x
         self.best_solution = BinaryPhenotype.from_int(init_x, self.max_x)
+        self.mutation_rate = mutation_rate
         self.log = {  # type: ignore
             'solutions_found_in_gen': {}
         }
@@ -153,8 +155,10 @@ class GeneticAlgorithm:
             parent_2 = choices[i + 1]
             off_1, off_2 = parent_1 + parent_2
 
-            if random.random() <= 0.2:
+            if random.random() <= self.mutation_rate:
                 off_1.flip_bit()
+
+            if random.random() <= self.mutation_rate:
                 off_2.flip_bit()
 
             intermediate_pop.append(off_1)
