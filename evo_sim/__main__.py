@@ -32,6 +32,9 @@ def quit_game():
 
 def refresh():
     # Super hacky, but works
+    global STARTED, PRINTED_BEST
+    STARTED = 'False'
+    PRINTED_BEST = False
     raise exceptions.ResetException()
 
 
