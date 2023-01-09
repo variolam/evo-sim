@@ -87,7 +87,7 @@ def load_config(path: str | pathlib.Path) -> dict:
     assert path.suffix == '.yaml', 'Only .yaml files are supported for config!'
 
     with open(path, 'r') as f:
-        return yaml.load(f)
+        return yaml.safe_load(f)
 
 
 # The main function that controls the game
