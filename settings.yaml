@@ -1,5 +1,5 @@
 evo:
   mutation-rate: 0.2
   stop-after: 200
-  population-size: 20
+  population-size: 5
 use-alg: evo

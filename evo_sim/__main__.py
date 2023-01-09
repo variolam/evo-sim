@@ -27,7 +27,6 @@ WINDOW_WIDTH = 1024
 WINDOW_HEIGHT = 600
 STARTED = 'False'
 PRINTED_BEST = False
-STOP_AFTER = 200
 
 WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption('evo-sim')
@@ -96,6 +95,7 @@ def main():
 
     config = load_config(pathlib.Path(__file__).parent.parent / 'settings.yaml')  # noqa: E501
     algorithm_used = config['use-alg']
+    stop_after = config['stop-after']
 
     first_loop = True
     looping = True
@@ -142,10 +142,11 @@ def main():
     min_index = np.argmin(hill_y)
 
     gen_algo = algs.GeneticAlgorithm(
-        20,
+        config['population-size'],
         fitness_function=fitness_function,
         max_x=WINDOW_WIDTH,
         init_x=int(np.argmax(hill_y)),
+        mutation_rate=config['mutation-rate']
     )
 
     # The main game loop
@@ -176,9 +177,9 @@ def main():
             first_loop = False
 
         if STARTED == algorithm_used:
-            if gen_algo._generation < STOP_AFTER:
+            if gen_algo._generation < stop_after:
                 population = gen_algo()
-            elif gen_algo._generation >= STOP_AFTER and not PRINTED_BEST:
+            elif gen_algo._generation >= stop_after and not PRINTED_BEST:
                 print(f"Best solution found: {repr(gen_algo.best_solution)}")
                 print(f"Global best solution: {np.min(hill_y)}, {np.min(hill_x)}")  # noqa: E501
                 print("Logs: ")
