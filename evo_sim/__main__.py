@@ -180,7 +180,7 @@ def main():
                 population = gen_algo()
             elif gen_algo._generation >= STOP_AFTER and not PRINTED_BEST:
                 print(f"Best solution found: {repr(gen_algo.best_solution)}")
-                print(f"Global best solution: {np.min(hill_y)}, {np.min(hill_x)}")
+                print(f"Global best solution: {np.min(hill_y)}, {np.min(hill_x)}")  # noqa: E501
                 print("Logs: ")
                 print(json.dumps(gen_algo.log, indent=2))
                 PRINTED_BEST = True
