@@ -80,7 +80,7 @@ def draw_population(population: list[algs.Individual]):
         )
 
 
-def algorithm(config: dict, fitness_function, hill_y):
+def algorithm_from_config(config: dict, fitness_function, hill_y):
     if config['use-alg'] == 'evo':
         return algs.GeneticAlgorithm(
             config['evo']['population-size'],
@@ -156,7 +156,7 @@ def main():
     # Rendered from top down, therefore visually max is our min
     min_index = np.argmin(hill_y)
 
-    gen_algo = algorithm(config, fitness_function, hill_y)
+    algo = algorithm_from_config(config, fitness_function, hill_y)
 
     # The main game loop
     while looping:
@@ -181,23 +181,23 @@ def main():
             start_button.click(event)
 
         if first_loop:
-            population = gen_algo.original_population
+            population = algo.original_population
             draw_population(population)
             first_loop = False
 
         if STARTED == algorithm_used:
-            if gen_algo._generation < stop_after:
-                population = gen_algo()
-            elif gen_algo._generation >= stop_after and not PRINTED_BEST:
-                print(f"Best solution found: {repr(gen_algo.best_solution)}")
+            if algo._generation < stop_after:
+                population = algo()
+            elif algo._generation >= stop_after and not PRINTED_BEST:
+                print(f"Best solution found: {repr(algo.best_solution)}")
                 print(f"Global best solution: {np.min(hill_y)}, {np.min(hill_x)}")  # noqa: E501
                 print("Logs: ")
-                print(json.dumps(gen_algo.log, indent=2))
+                print(json.dumps(algo.log, indent=2))
                 PRINTED_BEST = True
             draw_population(population)
 
-        best_x = int(gen_algo.best_solution)
-        best_y = gen_algo.best_solution.fitness_val
+        best_x = int(algo.best_solution)
+        best_y = algo.best_solution.fitness_val
         draw_triangle(
             x_pos=best_x,
             y_pos=best_y,
