@@ -91,7 +91,7 @@ def algorithm_from_config(config: dict, fitness_function, hill_y):
         )
     elif config['use-alg'] == 'abc':
         return algs.ABCAlgo(
-            config['abc']['population-size'],
+            config['abc']['number-of-solutions'],
             fitness_function=fitness_function,
             max_x=WINDOW_WIDTH,
             init_x=int(np.argmax(hill_y)),

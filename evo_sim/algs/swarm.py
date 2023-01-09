@@ -2,6 +2,8 @@ import dataclasses
 import functools
 import typing
 
+from evo_sim.algs.repr import Individual
+
 
 @functools.total_ordering
 @dataclasses.dataclass(eq=False)
@@ -30,12 +32,12 @@ class ABCAlgo:
 
     def __init__(
         self,
-        population_size: int,
+        number_of_solutions: int,
         fitness_function: typing.Callable[[int], float],
         max_x: int = 100,
         init_x: int = 0,
     ) -> None:
-        self.population_size = population_size
+        self.nos = number_of_solutions
         self.fitness_function = fitness_function
         self._generation = 0
         self.max_x = max_x
@@ -43,3 +45,6 @@ class ABCAlgo:
         self.log = {  # type: ignore
             'solutions_found_in_gen': {}
         }
+
+    def __call__(self, *args, **kwds) -> list[Individual]:
+        ...

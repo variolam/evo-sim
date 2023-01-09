@@ -1,7 +1,8 @@
 evo:
   mutation-rate: 0.2
-  population-size: 20
+  population-size: 20  # use even numbers
 abc:
-  population-size: 20
+  number-of-solutions: 10  # use even numbers
+
 use-alg: evo
 stop-after: 200
