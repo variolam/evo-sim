@@ -4,6 +4,7 @@ import pathlib
 import pygame
 from pygame import locals as py_locals
 import sys
+import yaml
 
 if sys.version_info < (3, 10):
     raise RuntimeError(
@@ -81,7 +82,12 @@ def draw_population(population: list[algs.Individual]):
 
 
 def load_config(path: str | pathlib.Path) -> dict:
-    ...
+    path = pathlib.Path(path)
+    assert path.exists(), f"Config path {path.absolute()} does not exist!"
+    assert path.suffix == '.yaml', 'Only .yaml files are supported for config!'
+
+    with open(path, 'r') as f:
+        return yaml.load(f)
 
 
 # The main function that controls the game
