@@ -80,6 +80,21 @@ def draw_population(population: list[algs.Individual]):
         )
 
 
+def algorithm(config: dict, fitness_function, hill_y):
+    if config['use-alg'] == 'evo':
+        return algs.GeneticAlgorithm(
+            config['evo']['population-size'],
+            fitness_function=fitness_function,
+            max_x=WINDOW_WIDTH,
+            init_x=int(np.argmax(hill_y)),
+            mutation_rate=config['evo']['mutation-rate']
+        )
+    elif config['use-alg'] == 'abc':
+        ...
+    else:
+        raise RuntimeError(f"Algorithm '{config['use-algo']}' not defined!")
+
+
 def load_config(path: str | pathlib.Path) -> dict:
     path = pathlib.Path(path)
     assert path.exists(), f"Config path {path.absolute()} does not exist!"
@@ -141,13 +156,7 @@ def main():
     # Rendered from top down, therefore visually max is our min
     min_index = np.argmin(hill_y)
 
-    gen_algo = algs.GeneticAlgorithm(
-        config['population-size'],
-        fitness_function=fitness_function,
-        max_x=WINDOW_WIDTH,
-        init_x=int(np.argmax(hill_y)),
-        mutation_rate=config['mutation-rate']
-    )
+    gen_algo = algorithm(config, fitness_function, hill_y)
 
     # The main game loop
     while looping:
