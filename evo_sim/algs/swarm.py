@@ -28,6 +28,17 @@ class Foodsource:
         return self.x_loc < o.x_loc
 
 
+class Bee:
+
+    def __init__(
+        self,
+        _type: str = typing.Literal['onlooker', 'scout', 'employed'],
+        assigned_source: Foodsource | None = None,
+    ) -> None:
+        self._type = _type
+        self._assigned_source = assigned_source
+
+
 class ABCAlgo:
 
     def __init__(
