@@ -90,7 +90,12 @@ def algorithm_from_config(config: dict, fitness_function, hill_y):
             mutation_rate=config['evo']['mutation-rate']
         )
     elif config['use-alg'] == 'abc':
-        ...
+        return algs.ABCAlgo(
+            config['abc']['population-size'],
+            fitness_function=fitness_function,
+            max_x=WINDOW_WIDTH,
+            init_x=int(np.argmax(hill_y)),
+        )
     else:
         raise RuntimeError(f"Algorithm '{config['use-algo']}' not defined!")
 

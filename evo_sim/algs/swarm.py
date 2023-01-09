@@ -34,7 +34,6 @@ class ABCAlgo:
         fitness_function: typing.Callable[[int], float],
         max_x: int = 100,
         init_x: int = 0,
-        **kwargs,
     ) -> None:
         self.population_size = population_size
         self.fitness_function = fitness_function
