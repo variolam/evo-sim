@@ -32,7 +32,7 @@ class Bee:
 
     def __init__(
         self,
-        _type: str = typing.Literal['onlooker', 'scout', 'employed'],
+        _type: typing.Literal['onlooker', 'scout', 'employed'],
         assigned_source: Foodsource | None = None,
     ) -> None:
         self._type = _type
