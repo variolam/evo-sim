@@ -93,6 +93,10 @@ def load_config(path: str | pathlib.Path) -> dict:
 # The main function that controls the game
 def main():
     global PRINTED_BEST
+
+    config = load_config(pathlib.Path(__file__).parent.parent / 'settings.yaml')  # noqa: E501
+    algorithm_used = config['use-alg']
+
     first_loop = True
     looping = True
     hill_x = np.arange(WINDOW_WIDTH)
@@ -171,7 +175,7 @@ def main():
             draw_population(population)
             first_loop = False
 
-        if STARTED == 'evo':
+        if STARTED == algorithm_used:
             if gen_algo._generation < STOP_AFTER:
                 population = gen_algo()
             elif gen_algo._generation >= STOP_AFTER and not PRINTED_BEST:
