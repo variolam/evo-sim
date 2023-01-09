@@ -1,8 +1,15 @@
 import json
 import numpy as np
+import pathlib
 import pygame
 from pygame import locals as py_locals
 import sys
+
+if sys.version_info < (3, 10):
+    raise RuntimeError(
+        f"Python version {sys.version_info} not supported! "
+        "Please use Python 3.10 or newer."
+    )
 
 from evo_sim import algs, exceptions, functions, ui_parts
 
@@ -71,6 +78,10 @@ def draw_population(population: list[algs.Individual]):
             center=(idv.x_pos, idv.y_pos),
             radius=idv.radius,
         )
+
+
+def load_config(path: str | pathlib.Path) -> dict:
+    ...
 
 
 # The main function that controls the game
