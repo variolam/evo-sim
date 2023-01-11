@@ -73,13 +73,13 @@ def create_startbutton(alg: str):
     return start_button_callback
 
 
-def draw_population(population: list[algs.Individual]):
+def draw_population(population: list[algs.Individual], scale: float):
     for idv in population:
         pygame.draw.circle(
             WINDOW,
             color=idv.colour,  # type: ignore
             center=(idv.x_pos, idv.y_pos),
-            radius=idv.radius,
+            radius=int(idv.radius * scale),
         )
 
 
@@ -121,6 +121,7 @@ def main():
     config = load_config(pathlib.Path(__file__).parent.parent / 'settings.yaml')  # noqa: E501
     algorithm_used = config['use-alg']
     stop_after = config['stop-after']
+    scale = config['scale']
 
     first_loop = True
     looping = True
@@ -171,7 +172,7 @@ def main():
     # The main game loop
     while looping:
         WINDOW.fill(BACKGROUND_C)
-        pygame.draw.lines(WINDOW, LINE_C, False, points, 3)
+        pygame.draw.lines(WINDOW, LINE_C, False, points, int(3 * scale))
         refresh_button.show()
         quit_button.show()
         start_button.show()
@@ -192,7 +193,7 @@ def main():
 
         if first_loop:
             population = algo.original_population
-            draw_population(population)
+            draw_population(population, scale)
             first_loop = False
 
         if STARTED == algorithm_used:
@@ -204,7 +205,7 @@ def main():
                 print("Logs: ")
                 print(json.dumps(algo.log, indent=2))
                 PRINTED_BEST = True
-            draw_population(population)
+            draw_population(population, scale)
 
         best_x = int(algo.best_solution)
         best_y = algo.best_solution.fitness_val
