@@ -62,12 +62,15 @@ def draw_triangle(x_pos, y_pos, color=(255, 0, 0), radius=20, offsets=(0, 0)):
 
 def start(mode):
     global STARTED
-    assert mode in ['False', 'evo', 'bee'], "Mode not recoginzed!"
+    assert mode in ['False', 'evo', 'abc'], "Mode not recoginzed!"
     STARTED = mode
 
 
-def start_button_callback():
-    start('evo')
+def create_startbutton(alg: str):
+    def start_button_callback():
+        start(alg)
+
+    return start_button_callback
 
 
 def draw_population(population: list[algs.Individual]):
@@ -155,7 +158,7 @@ def main():
             WINDOW_WIDTH - refresh_button.size[0] - quit_button.size[0] - 120,
             WINDOW_HEIGHT - 50
         ),
-        callback=start_button_callback,
+        callback=create_startbutton(algorithm_used),
     )
 
     # Rendered from top down, therefore visually max is our min

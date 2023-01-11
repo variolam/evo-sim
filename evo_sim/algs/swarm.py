@@ -49,9 +49,12 @@ class ABCAlgo:
         fitness_function: typing.Callable[[int], float],
         max_x: int = 100,
         init_x: int = 0,
+        limit: int = 20,
     ) -> None:
         self.nos = number_of_solutions
         self.fitness_function = fitness_function
+        Foodsource.fitness_function = fitness_function
+        self.limit = limit
         self._generation = 0
         self.max_x = max_x
         self.best_solution = Foodsource(init_x)
@@ -63,14 +66,19 @@ class ABCAlgo:
         self.fitness_values: list[float] = []
         self.counters: list[int] = []
         self.probs: list[float] = []
+        self.original_population: list[Individual] = []
         self._init_algorithm()
 
     def _init_algorithm(self) -> None:
         for _ in range(self.nos):
             x_val = random.randint(0, self.max_x)
-            self.food_sources.append(Foodsource(x_val))
+            f_source = Foodsource(x_val)
+            self.food_sources.append(f_source)
             self.counters.append(0)
             self.fitness_values.append(self.fitness_function(x_val))
+            self.original_population.append(
+                Individual(f_source.x_loc, f_source.fitness_val)
+            )
 
     def __call__(self, *args, **kwds) -> list[Individual]:
         self._employed_phase()
@@ -101,9 +109,9 @@ class ABCAlgo:
         for i in range(self.nos):
             neighbor = self.neighborhood(i)
 
-            if (n_fit_val := self.fitness_function(neighbor)) < self.fitness_function[i]:  # noqa: E501
+            if (n_fit_val := self.fitness_function(neighbor)) < self.fitness_values[i]:  # noqa: E501
                 self.food_sources[i] = Foodsource(neighbor)
-                self.fitness_values = n_fit_val
+                self.fitness_values[i] = n_fit_val
                 self.counters[i] = 0
             else:
                 self.counters[i] += 1
@@ -121,15 +129,15 @@ class ABCAlgo:
                 t += 1
                 neighbor = self.neighborhood(i)
 
-                if (n_fit_val := self.fitness_function(neighbor)) < self.fitness_function[i]:  # noqa: E501
+                if (n_fit_val := self.fitness_function(neighbor)) < self.fitness_values[i]:  # noqa: E501
                     self.food_sources[i] = Foodsource(neighbor)
-                    self.fitness_values = n_fit_val
+                    self.fitness_values[i] = n_fit_val
                     self.counters[i] = 0
                 else:
                     self.counters[i] += 1
             i = (i + 1) % (self.nos - 1)
 
-    def neighborhood(self, solution_index: int) -> float:
+    def neighborhood(self, solution_index: int) -> int:
         solution = self.food_sources[solution_index].x_loc
         rand_solution_index = solution_index
 
@@ -138,4 +146,4 @@ class ABCAlgo:
 
         rand_solution = self.food_sources[rand_solution_index].x_loc
         phi = random.uniform(-1, 1)
-        return solution + phi * (solution - rand_solution)
+        return int(solution + phi * (solution - rand_solution))
