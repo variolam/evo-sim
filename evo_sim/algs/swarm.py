@@ -81,12 +81,14 @@ class ABCAlgo:
             )
 
     def __call__(self, *args, **kwds) -> list[Individual]:
+        self._generation += 1
         self._employed_phase()
         self._generate_probabilities()
         self._onlooker_phase()
 
         best_index = np.argmax(self.fitness_values)
-        if self.fitness_values[best_index] > self.best_solution.fitness_val:
+        if self.fitness_values[best_index] < self.best_solution.fitness_val:
+            self.log['solutions_found_in_gen'][self._generation] = self.food_sources[best_index].fitness_val  # noqa: E501
             self.best_solution = self.food_sources[best_index]
 
         self._scout_phase()
