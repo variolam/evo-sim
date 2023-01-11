@@ -1,3 +1,4 @@
+import collections
 import dataclasses
 import functools
 import numpy as np
@@ -35,10 +36,22 @@ class Bee:
     def __init__(
         self,
         _type: typing.Literal['onlooker', 'scout', 'employed'],
-        assigned_source: Foodsource | None = None,
+        assigned_source: Foodsource,
     ) -> None:
         self._type = _type
         self._assigned_source = assigned_source
+        self.color_map = {
+            'onlooker': (255, 255, 0),
+            'scout': (255, 0, 0),
+            'employed': (0, 255, 0),
+        }
+
+    def to_individual(self) -> Individual:
+        return Individual(
+            self._assigned_source.x_loc,
+            self._assigned_source.fitness_val,
+            colour=self.color_map[self._type],
+        )
 
 
 class ABCAlgo:
@@ -50,11 +63,13 @@ class ABCAlgo:
         max_x: int = 100,
         init_x: int = 0,
         limit: int = 20,
+        show_bees: bool = False,
     ) -> None:
         self.nos = number_of_solutions
         self.fitness_function = fitness_function
         Foodsource.fitness_function = fitness_function
         self.limit = limit
+        self.show_bees = show_bees
         self._generation = 0
         self.max_x = max_x
         self.best_solution = Foodsource(init_x)
@@ -67,6 +82,7 @@ class ABCAlgo:
         self.counters: list[int] = []
         self.probs: list[float] = []
         self.original_population: list[Individual] = []
+        self.bees: dict[str, list[Bee]] = collections.defaultdict(list)
         self._init_algorithm()
 
     def _init_algorithm(self) -> None:
@@ -79,6 +95,8 @@ class ABCAlgo:
             self.original_population.append(
                 Individual(f_source.x_loc, f_source.fitness_val)
             )
+            self.bees['employed'].append(Bee('employed', f_source))
+            self.bees['onlooker'].append(Bee('onlooker', Foodsource(0)))
 
     def __call__(self, *args, **kwds) -> list[Individual]:
         self._generation += 1
@@ -92,10 +110,16 @@ class ABCAlgo:
             self.best_solution = self.food_sources[best_index]
 
         self._scout_phase()
-        return [
+
+        foodsources = [
             Individual(foodsource.x_loc, foodsource.fitness_val)
             for foodsource in self.food_sources
         ]
+        bees = [
+            b.to_individual()
+            for b in self.bees['employed'] + self.bees['onlooker']
+        ]
+        return (foodsources + bees) if self.show_bees else foodsources
 
     def _scout_phase(self, *args, **kwds):
         for i in range(self.nos):
@@ -103,6 +127,7 @@ class ABCAlgo:
                 self.taboo_table.add(self.food_sources[i].x_loc)
 
                 while (new_x := random.randint(0, self.max_x)) in self.taboo_table:
+                    self.bees['employed'][i] = Bee('scout', Foodsource(new_x))
                     self.food_sources[i] = Foodsource(new_x)
                     self.counters[i] = 0
                     self.fitness_values[i] = self.fitness_function(self.food_sources[i].fitness_val)  # noqa: E501
@@ -110,6 +135,7 @@ class ABCAlgo:
     def _employed_phase(self, *args, **kwds):
         for i in range(self.nos):
             neighbor = self.neighborhood(i)
+            self.bees['employed'][i] = Bee('employed', Foodsource(neighbor))
 
             if (n_fit_val := self.fitness_function(neighbor)) < self.fitness_values[i]:  # noqa: E501
                 self.food_sources[i] = Foodsource(neighbor)
@@ -130,6 +156,7 @@ class ABCAlgo:
             if random.random() < self.probs[i]:
                 t += 1
                 neighbor = self.neighborhood(i)
+                self.bees['onlooker'][i] = Bee('onlooker', Foodsource(neighbor))
 
                 if (n_fit_val := self.fitness_function(neighbor)) < self.fitness_values[i]:  # noqa: E501
                     self.food_sources[i] = Foodsource(neighbor)

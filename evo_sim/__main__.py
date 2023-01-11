@@ -98,6 +98,8 @@ def algorithm_from_config(config: dict, fitness_function, hill_y):
             fitness_function=fitness_function,
             max_x=WINDOW_WIDTH,
             init_x=int(np.argmax(hill_y)),
+            limit=config['abc']['limit'],
+            show_bees=config['abc']['show-bees'],
         )
     else:
         raise RuntimeError(f"Algorithm '{config['use-algo']}' not defined!")
