@@ -4,7 +4,7 @@ evo:
 abc:
   number-of-solutions: 10  # use even numbers
   show-bees: False
-  limit: 10
+  limit: 100
 
 use-alg: abc  # currently only 'evo' is supported
 stop-after: 200

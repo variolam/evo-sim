@@ -126,11 +126,16 @@ class ABCAlgo:
             if self.counters[i] > self.limit:
                 self.taboo_table.add(self.food_sources[i].x_loc)
 
-                while (new_x := random.randint(0, self.max_x)) in self.taboo_table:
-                    self.bees['employed'][i] = Bee('scout', Foodsource(new_x))
-                    self.food_sources[i] = Foodsource(new_x)
-                    self.counters[i] = 0
-                    self.fitness_values[i] = self.fitness_function(self.food_sources[i].fitness_val)  # noqa: E501
+                while True:
+
+                    if (new_x := random.randint(0, self.max_x)) in self.taboo_table:
+                        continue
+                    else:
+                        self.bees['employed'][i] = Bee('scout', Foodsource(new_x))
+                        self.food_sources[i] = Foodsource(new_x)
+                        self.counters[i] = 0
+                        self.fitness_values[i] = self.fitness_function(self.food_sources[i].fitness_val)  # noqa: E501
+                        break
 
     def _employed_phase(self, *args, **kwds):
         for i in range(self.nos):
