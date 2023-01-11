@@ -53,9 +53,22 @@ class ABCAlgo:
         self._generation = 0
         self.max_x = max_x
         self.best_solution = Foodsource(init_x)
+        self.taboo_table = set()
         self.log = {  # type: ignore
             'solutions_found_in_gen': {}
         }
 
     def __call__(self, *args, **kwds) -> list[Individual]:
         ...
+
+    def _scout_phase(self, *args, **kwds):
+        for i in range(self.nos):
+            ...
+
+    def _employed_phase(self, *args, **kwds):
+        for i in range(self.nos):
+            ...
+
+    def _onlooker_phase(self, *args, **kwds):
+        for i in range(self.nos):
+            ...
