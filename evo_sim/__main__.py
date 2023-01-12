@@ -21,7 +21,6 @@ BACKGROUND_C = (144, 238, 144)
 LINE_C = (74, 87, 51)
 
 # Game Setup
-FPS = 60
 fpsClock = pygame.time.Clock()
 WINDOW_WIDTH = 1024
 WINDOW_HEIGHT = 600
@@ -122,6 +121,7 @@ def main():
     algorithm_used = config['use-alg']
     stop_after = config['stop-after']
     scale = config['scale']
+    fps = config['fps']
 
     first_loop = True
     looping = True
@@ -218,7 +218,7 @@ def main():
 
         # Render elements of the game
         pygame.display.update()
-        fpsClock.tick(FPS)
+        fpsClock.tick(fps)
 
 
 if __name__ == '__main__':
