@@ -41,7 +41,7 @@ class Bee:
         self._type = _type
         self._assigned_source = assigned_source
         self.color_map = {
-            'onlooker': (255, 255, 0),
+            'onlooker': (230, 180, 20),
             'scout': (255, 0, 0),
             'employed': (0, 255, 0),
         }
