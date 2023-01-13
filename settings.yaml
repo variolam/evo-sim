@@ -3,10 +3,10 @@ evo:
   population-size: 20  # use even numbers
 abc:
   number-of-solutions: 10  # use even numbers
-  show-bees: True
-  limit: 20
+  show-bees: False
+  limit: 100
 
-use-alg: abc  # currently only 'evo' is supported
-stop-after: 200
-scale: 1.0
-fps: 10
+use-alg: evo  # 'evo' or 'abc'
+stop-after: 500  # Number of epochs to run
+scale: 1.0  # UI-Scale
+fps: 60  # Lower this to slow everything down
