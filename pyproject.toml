@@ -4,6 +4,9 @@ version = "0.1.0"
 description = ""
 authors = ["Michael Variola <michael.variola@gmail.com>"]
 
+[tool.poetry.scripts]
+sim = "evo_sim.__main__:start_sim"
+
 [tool.poetry.dependencies]
 python = "^3.10"
 numpy = "^1.24.0"

@@ -221,9 +221,13 @@ def main():
         fpsClock.tick(fps)
 
 
-if __name__ == '__main__':
+def start_sim():
     while True:
         try:
             main()
         except exceptions.ResetException:
             print("Resetting environment...")
+
+
+if __name__ == '__main__':
+    start_sim()
