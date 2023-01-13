@@ -105,7 +105,8 @@ class ABCAlgo:
         self._onlooker_phase()
 
         best_index = np.argmax(self.fitness_values)
-        if self.fitness_values[best_index] < self.best_solution.fitness_val and self.food_sources[best_index].x_loc >= 0:  # solutions can jump out of screen
+        new_best = self.food_sources[best_index]
+        if new_best.fitness_val < self.best_solution.fitness_val and new_best.x_loc >= 0 and new_best.x_loc < self.max_x:  # solutions can jump out of screen
             self.log['solutions_found_in_gen'][self._generation] = self.food_sources[best_index].fitness_val  # noqa: E501
             self.best_solution = self.food_sources[best_index]
 
